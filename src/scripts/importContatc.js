@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
-import Contact from '../db/models/Contact.js';
+import contact from '../db/models/contact.js';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ const importContacts = async () => {
     const data = await fs.readFile(filePath, 'utf-8');
     const contacts = JSON.parse(data);
 
-    await Contact.insertMany(contacts);
+    await contact.insertMany(contacts);
     console.log('Contacts imported successfully!');
     process.exit();
   } catch (error) {
