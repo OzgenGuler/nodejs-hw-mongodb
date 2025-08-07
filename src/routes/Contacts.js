@@ -13,7 +13,6 @@ router.get('/', async (req, res) => {
     data: contacts,
   });
 });
-
 router.get('/:contactId', async (req, res) => {
   const { contactId } = req.params;
 
