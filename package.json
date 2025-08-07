@@ -5,6 +5,8 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
+    "lint": "eslint src/**/*.js",
+    "lint:fix": "eslint src/**/*.js --fix",
     "prettier": "prettier --write ."
   },
   "repository": {
@@ -21,7 +23,8 @@
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "eslint": "^9.32.0",
-    "globals": "^16.3.0"
+    "globals": "^16.3.0",
+    "nodemon": "^3.1.10"
   },
   "dependencies": {
     "cors": "^2.8.5",
@@ -30,7 +33,7 @@
     "express": "^5.1.0",
     "mongodb": "^6.18.0",
     "mongoose": "^8.17.0",
-    "nodemon": "^3.1.10",
+    "pino": "^9.7.0",
     "pino-http": "^10.5.0",
     "pino-pretty": "^13.1.1",
     "prettier": "^3.6.2"

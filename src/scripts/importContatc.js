@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
-import Contact from '../db/Contact.js';
+import Contact from '../db/models/Contact.js';
 
 dotenv.config();
 

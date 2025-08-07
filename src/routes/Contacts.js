@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import Contact from '../db/Contact.js';
+import Contact from '../db/models/Contact.js';
 import { getAllContacts, getContactById } from '../services/contacts.js';
 
 const router = express.Router();
