@@ -89,6 +89,7 @@ router.put('/:contactId', async (req, res) => {
       data: updatedContact,
     });
   } catch (error) {
+    console.error('Error updating contact:', error);
     res.status(500).json({ message: 'Server error while updating contact.' });
   }
 });
@@ -112,6 +113,7 @@ router.delete('/:contactId', async (req, res) => {
       message: 'Contact deleted successfully!',
     });
   } catch (error) {
+    console.error('Error deleting contact:', error);
     res.status(500).json({ message: 'Server error while deleting contact.' });
   }
 });
