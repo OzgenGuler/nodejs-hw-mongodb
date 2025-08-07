@@ -3,12 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node src/index.js",
     "dev": "nodemon index.js",
-    "import": "node src/scripts/importContacts.js",
-    "lint": "eslint **/*.js",
-    "lint:fix": "eslint **/*.js --fix",
-    "prettier": "prettier --write ."
+    "import": "node src/scripts/importContacts.js"
   },
   "repository": {
     "type": "git",
