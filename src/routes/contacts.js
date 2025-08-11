@@ -1,6 +1,6 @@
 import express from 'express';
 import mongoose from 'mongoose';
-import contact from '../db/models/contact.js';
+import contact from '../db/models/Contact.js';
 import { getAllContacts, getContactById } from '../services/contacts.js';
 
 const router = express.Router();
@@ -21,16 +21,16 @@ router.get('/:contactId', async (req, res) => {
     return res.status(400).json({ message: 'Invalid contact ID format' });
   }
 
-  const contact = await getContactById(contactId);
+  const Contact = await getContactById(contactId);
 
-  if (!contact) {
+  if (!Contact) {
     return res.status(404).json({ message: 'Contact not found' });
   }
 
   res.status(200).json({
     status: 200,
     message: `Successfully found contact with id ${contactId}!`,
-    data: contact,
+    data: Contact,
   });
 });
 router.post('/', async (req, res) => {
