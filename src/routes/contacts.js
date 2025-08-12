@@ -1,9 +1,9 @@
-import express from 'express';
+import { Router } from 'express';
 import mongoose from 'mongoose';
-import contact from '../db/models/contact.js';
+import Contact from '../db/models/Contact.js';
 import { getAllContacts, getContactById } from '../services/contacts.js';
 
-const router = express.Router();
+const router = Router();
 
 router.get('/', async (req, res) => {
   const contacts = await getAllContacts();
@@ -43,7 +43,7 @@ router.post('/', async (req, res) => {
         .json({ message: 'Name and phone number are required.' });
     }
 
-    const newContact = await contact.create({
+    const newContact = await Contact.create({
       name,
       phoneNumber,
       email,
@@ -70,7 +70,7 @@ router.put('/:contactId', async (req, res) => {
   }
 
   try {
-    const updatedContact = await contact.findByIdAndUpdate(
+    const updatedContact = await Contact.findByIdAndUpdate(
       contactId,
       req.body,
       {
@@ -102,7 +102,7 @@ router.delete('/:contactId', async (req, res) => {
   }
 
   try {
-    const deletedContact = await contact.findByIdAndDelete(contactId);
+    const deletedContact = await Contact.findByIdAndDelete(contactId);
 
     if (!deletedContact) {
       return res.status(404).json({ message: 'Contact not found' });

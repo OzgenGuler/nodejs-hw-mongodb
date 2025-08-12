@@ -1,8 +1,8 @@
-import contact from '../db/models/Contact.js';
+import Contact from '../db/models/Contact.js';
 import { isValidObjectId } from 'mongoose';
 
 export const getAllContacts = async () => {
-  const contacts = await contact.find();
+  const contacts = await Contact.find();
   console.log('Contacts found:', contacts);
   if (!contacts) {
     return null;

@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import fs from 'fs/promises';
 import path from 'path';
-import contact from '../db/models/Contact.js';
+import Contact from '../db/models/Contact.js';
 
 dotenv.config();
 
@@ -54,7 +54,7 @@ const importContacts = async () => {
     }
     console.log(`Importing ${contacts.length} contacts...`);
 
-    await contact.insertMany(contacts);
+    await Contact.insertMany(contacts);
 
     console.log('Contacts imported successfully!');
 
