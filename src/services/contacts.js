@@ -1,4 +1,4 @@
-import Contact from '../db/models/Contact.js';
+import Contact from '../db/models/contacts.js';
 import { isValidObjectId } from 'mongoose';
 
 export const getAllContacts = async () => {
@@ -13,11 +13,11 @@ export const getContactById = async (id) => {
   if (!isValidObjectId(id)) return null;
 
   try {
-    const contact = await contact.findById(id);
+    const contact = await Contact.findById(id);
     console.log('Contact found:', contact);
-    return contact; // null ise null döner, varsa contact döner
+    return contact;
   } catch (error) {
     console.error('Error in getContactById:', error);
-    return null; // Hata durumunda null döndür
+    return null;
   }
 };

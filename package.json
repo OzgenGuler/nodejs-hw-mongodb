@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-    "import": "node src/scripts/importContacts.js"
+    "prettier": "prettier --write ."
   },
   "repository": {
     "type": "git",
