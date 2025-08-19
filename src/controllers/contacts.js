@@ -3,6 +3,7 @@ import {
   getContactById,
   createContact,
   updateContact,
+  deleteContact,
 } from '../services/contacts.js';
 import createHttpError from 'http-errors';
 
@@ -60,9 +61,9 @@ export const createContactController = async (req, res, next) => {
   console.log('Creating contact with data:', contactData);
 
   try {
-    const result = await createContact({ contactData });
+    const result = await createContact(contactData);
     if (!result) {
-      return next(createHttpError(400, 'Contact creation failed'));
+      return next(createHttpError(400, 'Failed to create contact'));
     }
     res.status(201).json({
       status: 201,
@@ -70,9 +71,10 @@ export const createContactController = async (req, res, next) => {
       data: result,
     });
   } catch (error) {
-    console.error('Error creating contact:', error);
-    next(error);
+    console.error('Error creating contact:', error.message);
+    next(createHttpError(400, 'Contact creation failed'));
   }
+  console.log('REQ BODY:', req.body);
 };
 export const updateContactController = async (req, res, next) => {
   const { contactId } = req.params;
@@ -95,6 +97,7 @@ export const updateContactController = async (req, res, next) => {
 };
 export const deleteContactController = async (req, res, next) => {
   const { contactId } = req.params;
+  await deleteContact(contactId);
   try {
     return res.status(204).json({
       status: 204,

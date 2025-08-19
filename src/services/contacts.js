@@ -1,5 +1,6 @@
 import Contact from '../db/models/contacts.js';
 import { isValidObjectId } from 'mongoose';
+import createHttpError from 'http-errors';
 
 export const getAllContacts = async ({
   page = 1,
@@ -49,13 +50,13 @@ export const getAllContacts = async ({
 //   return contacts;
 // };
 
-export const getContactById = async (id) => {
-  if (!isValidObjectId(id)) return null;
+export const getContactById = async (contactId) => {
+  if (!isValidObjectId(contactId)) return null;
 
-  const contact = await Contact.findById(id);
+  const contact = await Contact.findById(contactId);
   console.log('Contact found:', contact);
   if (!contact) {
-    console.log(`Contact with ID ${id} not found`);
+    console.log(`Contact with ID ${contactId} not found`);
     return null;
   }
   console.log('Contact retrived successfully:', contact);
@@ -65,41 +66,44 @@ export const getContactById = async (id) => {
 export const createContact = async (contactData) => {
   try {
     const result = await Contact.create(contactData);
-    if (!result) {
-      console.log('Contact created successfully:', result);
-      return null;
-    }
+    // if (!result) {
+    //   return null;
+    // }
+    console.log('Contact created successfully:', result);
+
     return result;
   } catch (error) {
-    console.error('Error creating contact:', error);
-    return null;
+    console.error('Error creating contact:', error.message);
+    return error;
   }
 };
 
-export const updateContact = async (id, contactData) => {
-  if (!isValidObjectId(id)) return null;
+export const updateContact = async (contactId, contactData) => {
+  if (!isValidObjectId(contactId)) return null;
 
   const result = await Contact.findByIdAndUpdate(
     {
-      _id: id,
+      _id: contactId,
     },
     contactData,
     { runValidators: false }
   );
   if (!result) {
-    console.log(`Contact with ID ${id} not found for update`);
+    console.log(`Contact with ID ${contactId} not found for update`);
     return null;
   }
   return result;
 };
 
-export const deleteContact = async (id) => {
-  if (!isValidObjectId(id)) return null;
+export const deleteContact = async (contactId) => {
+  if (!isValidObjectId(contactId)) {
+    return createHttpError(400, `Invalid contact id`);
+  }
 
-  const result = await Contact.findByIdAndDelete(id);
+  const result = await Contact.findByIdAndDelete(contactId);
   if (!result) {
-    console.log(`Contact with ID ${id} not found for deletion`);
-    return null;
+    console.log(`Contact with ID ${contactId} not found for deletion`);
+    // return null;
   }
   console.log('Contact deleted successfully:', result);
   return result;
