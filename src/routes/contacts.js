@@ -14,10 +14,12 @@ import {
 } from '../validation/contactsSchemas.js';
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
+import { authenticate } from '../middlewares/authenticate.js';
 // import mongoose from 'mongoose';
 // import createError from 'http-errors';
 
 const router = express.Router();
+router.use(authenticate);
 
 router.get('/', getContactsController);
 

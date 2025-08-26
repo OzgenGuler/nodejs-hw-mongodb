@@ -21,7 +21,12 @@ const contactSchema = new Schema(
       type: String,
       enum: ['work', 'home', 'personal'],
       required: true,
-      default: 'personel',
+      default: 'personal',
+    },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: 'users',
+      required: true,
     },
   },
   {
@@ -29,12 +34,12 @@ const contactSchema = new Schema(
     versionKey: false,
   }
 );
-contactSchema.pre('save', (next) => {
+contactSchema.pre('save', function (next) {
   console.log('A new contact is being created:', this);
   next();
 });
 
-contactSchema.post('save', (doc) => {
+contactSchema.post('save', function (doc) {
   console.log('Contact saved:', doc);
 });
 
