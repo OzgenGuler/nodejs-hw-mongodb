@@ -1,9 +1,35 @@
 import bcrypt from 'bcrypt';
-// import jwt from 'jsonwebtoken';
+import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import createHttpError from 'http-errors';
 import User from '../db/models/user.js';
 import Session from '../db/models/session.js';
+
+const { JWT_SECRET } = process.env;
+
+export const resetPassword = async (token, newPassword) => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { email } = decoded;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new createHttpError(404, 'User not found');
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    await Session.deleteMany({ userId: user._id });
+    return true;
+  } catch (error) {
+    if (
+      error.name === 'TokenExpiredError' ||
+      error.name === 'JsonWebTokenError'
+    ) {
+      throw new createHttpError(401, 'Invalid or expired token');
+    }
+    throw error;
+  }
+};
 
 const generateTokens = () => {
   return {

@@ -4,7 +4,59 @@ import {
   refreshSessionService,
   logoutUserService,
 } from '../services/auth.js';
-// import createHttpError from 'http-errors';
+
+import createHttpError from 'http-errors';
+import { sendResetEmail } from '../services/emailService.js';
+import jwt from 'jsonwebtoken';
+import User from '../db/models/user.js';
+import * as authServices from '../services/auth.js';
+import { ROLES } from '../constant/index.js';
+
+export const sendResetEmailController = async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new createHttpError(404, 'User with this email does not exist');
+    }
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
+      expiresIn: '1h',
+    });
+    const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
+    try {
+      await sendResetEmail({
+        to: email,
+        subject: 'Password Reset',
+        html: `<h2>Password Reset Request</h2>
+        <p>Click the link below to reset your password:</p>
+        <a href="${resetLink}">Reset Password</a>
+        <p>This link will expire in 1 hour.</p>`,
+      });
+    } catch (err) {
+      throw new createHttpError(500, err, 'Failed to send reset email');
+    }
+
+    res.status(200).json({
+      status: 200,
+      message: 'Password reset email sent successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const resetPasswordController = async (req, res, next) => {
+  try {
+    const { token, password } = req.body;
+    await authServices.resetPassword(token, password);
+    res.status(200).json({
+      status: 200,
+      message: 'Password has been reset successfully',
+    });
+  } catch (error) {
+    next(error);
+  }
+};
 
 export const registerController = async (req, res, next) => {
   //   try {
@@ -157,6 +209,43 @@ export const logoutController = async (req, res, next) => {
 
     res.clearCookie('refreshToken');
     res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const getCurrentUserController = async (req, res, next) => {
+  try {
+    const user = req.user;
+    if (!user) {
+      throw new createHttpError(404, 'User not found');
+    }
+    res.status(200).json({
+      status: 200,
+      message: 'Current user fetched successfully',
+      data: user,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateUserRoleController = async (req, res, next) => {
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    if (!Object.values(ROLES).includes(role)) {
+      throw new createHttpError(400, 'Invalid role');
+    }
+
+    const updatedUser = await authServices.updateUserRole(userId, role);
+
+    res.status(200).json({
+      status: 200,
+      message: 'User role updated successfully',
+      data: updatedUser,
+    });
   } catch (error) {
     next(error);
   }

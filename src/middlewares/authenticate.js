@@ -52,6 +52,7 @@
 
 import createHttpError from 'http-errors';
 import { findSessionByAccessToken } from '../services/auth.js';
+import jwt from 'jsonwebtoken';
 
 export const authenticate = async (req, res, next) => {
   try {
@@ -68,12 +69,23 @@ export const authenticate = async (req, res, next) => {
         createHttpError(401, 'Authorization header must be Bearer token')
       );
     }
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+
+    ((req.user = {
+      id: payload.sub,
+      email: payload.email,
+      role: payload.role,
+    }),
+      next());
 
     const session = await findSessionByAccessToken(token);
 
     req.user = session.userId;
     next();
   } catch (error) {
-    next(error);
+    if (error.name === 'TokenExpiredError') {
+      return next(createHttpError(401, 'Access token expired'));
+    }
+    next(createHttpError(401, 'Invalid token'));
   }
 };

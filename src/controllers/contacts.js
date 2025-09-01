@@ -7,6 +7,9 @@ import {
   deleteContact,
 } from '../services/contacts.js';
 import { ROLES } from '../constant/index.js';
+import * as contactServices from '../services/contacts.js';
+import { uploadToCloudinary } from '../services/cloudinary.js';
+
 // import createHttpError from 'http-errors';
 
 // export const getContactsController = async (req, res, next) => {
@@ -167,6 +170,21 @@ export const getContactByIdController = async (req, res, next) => {
 
 export const createContactController = async (req, res, next) => {
   try {
+    let photoUrl = null;
+    if (req.file) {
+      photoUrl = await uploadToCloudinary(req.file.buffer);
+    }
+    const newContact = await contactServices.createContact({
+      ...req.body,
+      userId: req.user._id,
+      photo: photoUrl,
+    });
+    res.status(201).json({
+      status: 201,
+      message: 'Successfully created a contact!',
+      data: newContact,
+    });
+
     const userId = req.user._id;
     const contact = await createContact(req.body, userId);
 
@@ -182,6 +200,23 @@ export const createContactController = async (req, res, next) => {
 
 export const updateContactController = async (req, res, next) => {
   try {
+    let photoUrl = undefined;
+
+    if (req.file) {
+      photoUrl = await uploadToCloudinary(req.file.buffer);
+    }
+
+    const updatedContact = await contactServices.updateContact(
+      req.params.contactId,
+      { ...req.body, ...(photoUrl ? { photo: photoUrl } : {}) },
+      req.user
+    );
+
+    res.json({
+      status: 200,
+      message: 'Contact updated successfully',
+      data: updatedContact,
+    });
     const { contactId } = req.params;
     const userId = req.user._id;
     const contact = await updateContact(contactId, req.body, userId);
