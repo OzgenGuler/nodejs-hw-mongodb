@@ -11,6 +11,7 @@ import jwt from 'jsonwebtoken';
 import User from '../db/models/user.js';
 import * as authServices from '../services/auth.js';
 import { ROLES } from '../constant/index.js';
+import { resetPassword } from '../services/auth.js';
 
 export const sendResetEmailController = async (req, res, next) => {
   try {
@@ -46,9 +47,10 @@ export const sendResetEmailController = async (req, res, next) => {
 };
 
 export const resetPasswordController = async (req, res, next) => {
+  await resetPassword(req.body);
   try {
-    const { token, password } = req.body;
-    await authServices.resetPassword(token, password);
+    // const { token, password } = req.body;
+    // await authServices.resetPassword(token, password);
     res.status(200).json({
       status: 200,
       message: 'Password has been reset successfully',

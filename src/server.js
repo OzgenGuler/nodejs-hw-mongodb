@@ -30,7 +30,9 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth.js';
 import contactsRouter from './routes/contacts.js';
-import { authenticate } from './middlewares/authenticate.js';
+// import { authenticate } from './middlewares/authenticate.js';
+import { upload } from './middlewares/upload.js';
+import { authorize } from './middlewares/authorize.js';
 
 export const setupServer = () => {
   const app = express();
@@ -48,7 +50,7 @@ export const setupServer = () => {
 
   // Routes
   app.use('/auth', authRouter);
-  app.use('/contacts', authenticate, contactsRouter);
+  app.use('/contacts', authorize('admin', 'moderator'), contactsRouter);
 
   // Error handler
   app.use((err, req, res, next) => {
@@ -59,6 +61,15 @@ export const setupServer = () => {
       status,
       message,
     });
+  });
+
+  app.post('/contacts', upload.single('avatar'), (req, res) => {
+    // Handle the uploaded file and other form data here
+    res.json({ message: 'File uploaded successfully', file: req.file });
+  });
+
+  app.post('/contacts', upload.array('photo', 10), (req, res) => {
+    res.json({ message: 'Files uploaded successfully', files: req.files });
   });
 
   // 404 handler

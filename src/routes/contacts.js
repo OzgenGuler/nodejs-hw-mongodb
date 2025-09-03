@@ -17,7 +17,9 @@ import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
 import { authorize } from '../middlewares/authorize.js';
 import { upload } from '../middlewares/upload.js';
-import * as contactsController from '../controllers/contacts.js';
+// import * as contactsController from '../controllers/contacts.js';
+import { ROLES } from '../constant/index.js';
+import { checkRoles } from '../middlewares/checkRoles.js';
 // import mongoose from 'mongoose';
 // import createError from 'http-errors';
 
@@ -31,22 +33,29 @@ router.get('/:contactId', ctrlWrapper(getContactByIdController));
 // router.post('/', ctrlWrapper(createContactController));
 router.post(
   '/',
+  checkRoles(ROLES.ADMIN, ROLES.MODERATOR, ROLES.USER),
+  isValidId,
   upload.single('photo'),
-  authorize('admin', 'moderator', 'user'),
   validateBody(createContactSchema),
-
-  contactsController.createContactController
+  ctrlWrapper(createContactController)
+);
+router.put(
+  '/:contactId',
+  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+  isValidId,
+  upload.single('photo'),
+  validateBody(updateContactSchema),
+  ctrlWrapper(updateContactController)
 );
 
 // router.patch('/:contactId', ctrlWrapper(updateContactController));
 router.patch(
   '/:contactId',
+  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
   upload.single('photo'),
-
-  authorize('admin', 'moderator'),
   isValidId,
   validateBody(updateContactSchema),
-  contactsController.updateContactController
+  ctrlWrapper(updateContactController)
 );
 
 // router.delete('/:contactId', ctrlWrapper(deleteContactController));

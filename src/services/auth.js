@@ -4,32 +4,47 @@ import crypto from 'crypto';
 import createHttpError from 'http-errors';
 import User from '../db/models/user.js';
 import Session from '../db/models/session.js';
+import { env } from 'process';
 
 const { JWT_SECRET } = process.env;
 
-export const resetPassword = async (token, newPassword) => {
+export const resetPassword = async (payload) => {
+  let enteries;
   try {
-    const decoded = jwt.verify(token, JWT_SECRET);
-    const { email } = decoded;
-    const user = await User.findOne({ email });
-    if (!user) {
-      throw new createHttpError(404, 'User not found');
-    }
-    const hashedPassword = await bcrypt.hash(newPassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-    await Session.deleteMany({ userId: user._id });
-    return true;
+    enteries = jwt.verify(payload.token, env('JWT_SECRET'));
   } catch (error) {
-    if (
-      error.name === 'TokenExpiredError' ||
-      error.name === 'JsonWebTokenError'
-    ) {
-      throw new createHttpError(401, 'Invalid or expired token');
-    }
+    if (error instanceof Error) throw new createHttpError(401, error.message);
     throw error;
   }
+  const user = await User.findOne({ email: enteries.email, _id: enteries.sub });
+  if (!user) throw new createHttpError(404, 'User not found');
+  const encryptedPassword = await bcrypt.hash(payload.Password, 12);
+  await User.updateOne({ _id: user._id }, { password: encryptedPassword });
 };
+
+// export const resetPassword = async (token, newPassword) => {
+// try {
+//   const decoded = jwt.verify(token, JWT_SECRET);
+//   const { email } = decoded;
+//   const user = await User.findOne({ email });
+//   if (!user) {
+//     throw new createHttpError(404, 'User not found');
+//   }
+//   const hashedPassword = await bcrypt.hash(newPassword, 10);
+//   user.password = hashedPassword;
+//   await user.save();
+//   await Session.deleteMany({ userId: user._id });
+//   return true;
+// } catch (error) {
+//   if (
+//     error.name === 'TokenExpiredError' ||
+//     error.name === 'JsonWebTokenError'
+//   ) {
+//     throw new createHttpError(401, 'Invalid or expired token');
+//   }
+//   throw error;
+// }
+// };
 
 const generateTokens = () => {
   return {
