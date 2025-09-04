@@ -32,7 +32,9 @@ import authRouter from './routes/auth.js';
 import contactsRouter from './routes/contacts.js';
 // import { authenticate } from './middlewares/authenticate.js';
 import { upload } from './middlewares/upload.js';
-import { authorize } from './middlewares/authorize.js';
+// import { authorize } from './middlewares/authorize.js';
+import { ROLES, UPLOAD_DIR } from './constant/index.js';
+import { checkRoles } from './middlewares/checkRoles.js';
 
 export const setupServer = () => {
   const app = express();
@@ -45,12 +47,18 @@ export const setupServer = () => {
       credentials: true,
     })
   );
-  app.use(cookieParser());
+  app.use(cors());
   app.use(express.json());
+  app.use(cookieParser());
+  app.use('/uploads', express.static(UPLOAD_DIR));
 
   // Routes
   app.use('/auth', authRouter);
-  app.use('/contacts', authorize('admin', 'moderator'), contactsRouter);
+  app.use(
+    '/contacts',
+    checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+    contactsRouter
+  );
 
   // Error handler
   app.use((err, req, res, next) => {

@@ -15,7 +15,7 @@ import {
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
-import { authorize } from '../middlewares/authorize.js';
+// import { authorize } from '../middlewares/authorize.js';
 import { upload } from '../middlewares/upload.js';
 // import * as contactsController from '../controllers/contacts.js';
 import { ROLES } from '../constant/index.js';
@@ -26,9 +26,19 @@ import { checkRoles } from '../middlewares/checkRoles.js';
 const router = express.Router();
 router.use(authenticate);
 
-router.get('/', authorize('admin', 'moderator'), getContactsController);
+router.get(
+  '/',
+  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+  isValidId,
+  ctrlWrapper(getContactsController)
+);
 
-router.get('/:contactId', ctrlWrapper(getContactByIdController));
+router.get(
+  '/:contactId',
+  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+  isValidId,
+  ctrlWrapper(getContactByIdController)
+);
 
 // router.post('/', ctrlWrapper(createContactController));
 router.post(
@@ -61,9 +71,9 @@ router.patch(
 // router.delete('/:contactId', ctrlWrapper(deleteContactController));
 router.delete(
   '/:contactId',
-  authorize('admin'),
+  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
   isValidId,
-  deleteContactController
+  ctrlWrapper(deleteContactController)
 );
 
 export default router;

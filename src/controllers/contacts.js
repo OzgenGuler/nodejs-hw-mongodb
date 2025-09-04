@@ -6,9 +6,12 @@ import {
   updateContact,
   deleteContact,
 } from '../services/contacts.js';
-import { ROLES } from '../constant/index.js';
+import { ROLES, CLOUDINARY } from '../constant/index.js';
 import * as contactServices from '../services/contacts.js';
 import { uploadToCloudinary } from '../services/cloudinary.js';
+import { env } from '../utils/env.js';
+import saveFileToCloudinary from '../utils/saveFileToCloudinary.js';
+import saveFileToUploadDir from '../utils/saveFileToUploadDir.js';
 
 // import createHttpError from 'http-errors';
 
@@ -250,6 +253,34 @@ export const deleteContactController = async (req, res, next) => {
     }
 
     res.status(204).send();
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const uploadPhotoController = async (req, res, next) => {
+  try {
+    const file = req.file;
+    if (!file) {
+      return res
+        .status(400)
+        .json({ success: false, message: 'No file uploaded' });
+    }
+    let photoUrl;
+    const ENABLE_CLOUDINARY = env(CLOUDINARY.ENABLE_CLOUDINARY);
+    if (ENABLE_CLOUDINARY === 'true') {
+      photoUrl = await saveFileToCloudinary(file);
+    } else {
+      const fileNAme = await saveFileToUploadDir(file);
+      photoUrl = `/uploads/${fileNAme}`;
+    }
+    res.status(200).json({
+      success: true,
+      message: 'File uploaded successfully',
+      data: {
+        photoUrl,
+      },
+    });
   } catch (error) {
     next(error);
   }
