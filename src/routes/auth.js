@@ -7,7 +7,7 @@ import { validateBody } from '../middlewares/validateBody.js';
 import {
   sendResetEmailSchema,
   resetPasswordSchema,
-} from '../validation/sendResetEmailSchema.js';
+} from '../validation/authSchemas.js';
 import {
   registerController,
   loginController,

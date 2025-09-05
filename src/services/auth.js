@@ -4,9 +4,65 @@ import crypto from 'crypto';
 import createHttpError from 'http-errors';
 import User from '../db/models/user.js';
 import Session from '../db/models/session.js';
+import { sendEmail } from '../utils/sendMail.js';
 import { env } from 'process';
 
-const { JWT_SECRET } = process.env;
+// const JWT_SECRET = env('JWT_SECRET');
+// const APP_DOMAIN = env('APP_DOMAIN');
+const JWT_SECRET = process.env.JWT_SECRET;
+const APP_DOMAIN = process.env.APP_DOMAIN;
+
+export const sendResetEmailService = async (email) => {
+  const user = await User.findOne({ email });
+  if (!user) throw new createHttpError(404, 'User not found');
+
+  const token = jwt.sign({ email: user.email }, JWT_SECRET, {
+    expiresIn: '5m',
+  });
+
+  const resetLink = `${APP_DOMAIN.replace(/\/$/, '')}/reset-password?token=${token}`;
+
+  const html = `
+  <p>You requested a password reset. Click the link below to reset your password:</p>
+  <a href="${resetLink}">Reset Password</a>
+  <p>This link will expire in 5 minutes.</p>
+  `;
+  try {
+    await sendEmail({
+      to: user.email,
+      subject: 'Password Reset',
+      html,
+    });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    throw new createHttpError(500, 'Error sending email');
+  }
+  return true;
+};
+
+export const resetPasswordService = async (token, newPassword) => {
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    const { email } = decoded;
+    const user = await User.findOne({ email });
+    if (!user) {
+      throw new createHttpError(404, 'User not found');
+    }
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    await Session.deleteMany({ userId: user._id });
+    return true;
+  } catch (error) {
+    if (
+      error.name === 'TokenExpiredError' ||
+      error.name === 'JsonWebTokenError'
+    ) {
+      throw new createHttpError(401, 'Invalid or expired token');
+    }
+    throw error;
+  }
+};
 
 export const resetPassword = async (payload) => {
   let enteries;
@@ -18,8 +74,10 @@ export const resetPassword = async (payload) => {
   }
   const user = await User.findOne({ email: enteries.email, _id: enteries.sub });
   if (!user) throw new createHttpError(404, 'User not found');
+
   const encryptedPassword = await bcrypt.hash(payload.Password, 12);
   await User.updateOne({ _id: user._id }, { password: encryptedPassword });
+  await Session.deleteMany({ userId: user._id });
 };
 
 // export const resetPassword = async (token, newPassword) => {

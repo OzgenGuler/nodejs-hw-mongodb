@@ -3,40 +3,33 @@ import {
   loginUserService,
   refreshSessionService,
   logoutUserService,
+  // sendResetEmailService,
+  resetPasswordService,
 } from '../services/auth.js';
 
 import createHttpError from 'http-errors';
-import { sendResetEmail } from '../services/emailService.js';
+import { sendEmail } from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
 import User from '../db/models/user.js';
-import * as authServices from '../services/auth.js';
+// import * as authServices from '../services/auth.js';
 import { ROLES } from '../constant/index.js';
-import { resetPassword } from '../services/auth.js';
 
 export const sendResetEmailController = async (req, res, next) => {
   try {
     const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
-      throw new createHttpError(404, 'User with this email does not exist');
+      return res.status(404).json({ message: 'User not found!' });
     }
-    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, {
-      expiresIn: '1h',
+    const token = jwt.sign({ email }, process.env.JWT_SECRET, {
+      expiresIn: '5m',
     });
     const resetLink = `${process.env.APP_DOMAIN}/reset-password?token=${token}`;
-    try {
-      await sendResetEmail({
-        to: email,
-        subject: 'Password Reset',
-        html: `<h2>Password Reset Request</h2>
-        <p>Click the link below to reset your password:</p>
-        <a href="${resetLink}">Reset Password</a>
-        <p>This link will expire in 1 hour.</p>`,
-      });
-    } catch (err) {
-      throw new createHttpError(500, err, 'Failed to send reset email');
-    }
-
+    await sendEmail(
+      email,
+      'Reset your password',
+      `<p>Şifrenizi sıfırlamak için linke tıklayın: <a href="${resetLink}">${resetLink}</a></p>`
+    );
     res.status(200).json({
       status: 200,
       message: 'Password reset email sent successfully',
@@ -47,10 +40,9 @@ export const sendResetEmailController = async (req, res, next) => {
 };
 
 export const resetPasswordController = async (req, res, next) => {
-  await resetPassword(req.body);
   try {
-    // const { token, password } = req.body;
-    // await authServices.resetPassword(token, password);
+    const { token, password } = req.body;
+    await resetPasswordService(token, password);
     res.status(200).json({
       status: 200,
       message: 'Password has been reset successfully',
@@ -79,7 +71,6 @@ export const registerController = async (req, res, next) => {
   // };
   try {
     const user = await registerUserService(req.body);
-
     res.status(201).json({
       status: 201,
       message: 'Successfully registered a user!',
@@ -241,7 +232,7 @@ export const updateUserRoleController = async (req, res, next) => {
       throw new createHttpError(400, 'Invalid role');
     }
 
-    const updatedUser = await authServices.updateUserRole(userId, role);
+    const updatedUser = await updateUserRoleController(userId, role);
 
     res.status(200).json({
       status: 200,

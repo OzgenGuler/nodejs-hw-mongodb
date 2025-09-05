@@ -1,4 +1,4 @@
-// import Contact from '../db/models/contacts.js';
+import Contact from '../db/models/contacts.js';
 import {
   getAllContacts,
   getContactById,
@@ -177,7 +177,7 @@ export const createContactController = async (req, res, next) => {
     if (req.file) {
       photoUrl = await uploadToCloudinary(req.file.buffer);
     }
-    const newContact = await contactServices.createContact({
+    const newContact = await Contact.create({
       ...req.body,
       userId: req.user._id,
       photo: photoUrl,
