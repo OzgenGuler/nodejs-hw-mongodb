@@ -1,6 +1,6 @@
 import createHttpError from 'http-errors';
 
-import { ROLES } from '../constant/index.js';
+// import { ROLES } from '../constant/index.js';
 
 export const checkRoles = (...roles) => {
   return (req, res, next) => {
@@ -19,8 +19,8 @@ export const checkRoles = (...roles) => {
 
 //sadece admin kontrolü
 
-export const requireAdmin = checkRoles(ROLES.ADMIN);
+// export const requireAdmin = checkRoles(ROLES.ADMIN);
 
 //Admin ve moderator kontrolü
 
-export const requireAdminOrModerator = checkRoles(ROLES.ADMIN, ROLES.MODERATOR);
+// export const requireAdminOrModerator = checkRoles(ROLES.ADMIN, ROLES.MODERATOR);

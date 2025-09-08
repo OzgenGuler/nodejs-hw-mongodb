@@ -4,6 +4,7 @@ export const createUserSchema = Joi.object({
   name: Joi.string().min(3).max(30).required(),
   email: Joi.string().email().min(5).max(50).required(),
   password: Joi.string().min(6).max(20).required(),
+  role: Joi.string().valid('user', 'admin', 'moderator').optional(),
 });
 
 export const loginUserSchema = Joi.object({

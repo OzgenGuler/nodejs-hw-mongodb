@@ -33,8 +33,10 @@ import contactsRouter from './routes/contacts.js';
 // import { authenticate } from './middlewares/authenticate.js';
 import { upload } from './middlewares/upload.js';
 // import { authorize } from './middlewares/authorize.js';
-import { ROLES, UPLOAD_DIR } from './constant/index.js';
-import { checkRoles } from './middlewares/checkRoles.js';
+import { UPLOAD_DIR } from './constant/index.js';
+// import { ROLES, UPLOAD_DIR } from './constant/index.js';
+
+// import { checkRoles } from './middlewares/checkRoles.js';
 
 export const setupServer = () => {
   const app = express();
@@ -56,7 +58,7 @@ export const setupServer = () => {
   app.use('/auth', authRouter);
   app.use(
     '/contacts',
-    checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+    // checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
     contactsRouter
   );
 

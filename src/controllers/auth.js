@@ -12,7 +12,7 @@ import { sendEmail } from '../utils/sendMail.js';
 import jwt from 'jsonwebtoken';
 import User from '../db/models/user.js';
 // import * as authServices from '../services/auth.js';
-import { ROLES } from '../constant/index.js';
+// import { ROLES } from '../constant/index.js';
 
 export const sendResetEmailController = async (req, res, next) => {
   try {
@@ -228,9 +228,9 @@ export const updateUserRoleController = async (req, res, next) => {
     const { userId } = req.params;
     const { role } = req.body;
 
-    if (!Object.values(ROLES).includes(role)) {
-      throw new createHttpError(400, 'Invalid role');
-    }
+    // if (!Object.values(ROLES).includes(role)) {
+    //   throw new createHttpError(400, 'Invalid role');
+    // }
 
     const updatedUser = await updateUserRoleController(userId, role);
 

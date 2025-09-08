@@ -18,8 +18,8 @@ import { authenticate } from '../middlewares/authenticate.js';
 // import { authorize } from '../middlewares/authorize.js';
 import { upload } from '../middlewares/upload.js';
 // import * as contactsController from '../controllers/contacts.js';
-import { ROLES } from '../constant/index.js';
-import { checkRoles } from '../middlewares/checkRoles.js';
+// import { ROLES } from '../constant/index.js';
+// import { checkRoles } from '../middlewares/checkRoles.js';
 // import mongoose from 'mongoose';
 // import createError from 'http-errors';
 
@@ -28,14 +28,14 @@ router.use(authenticate);
 
 router.get(
   '/',
-  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+  // checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
   isValidId,
   ctrlWrapper(getContactsController)
 );
 
 router.get(
   '/:contactId',
-  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+  // checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
   isValidId,
   ctrlWrapper(getContactByIdController)
 );
@@ -43,7 +43,7 @@ router.get(
 // router.post('/', ctrlWrapper(createContactController));
 router.post(
   '/',
-  checkRoles(ROLES.ADMIN, ROLES.MODERATOR, ROLES.USER),
+  // checkRoles(ROLES.ADMIN, ROLES.MODERATOR, ROLES.USER),
   isValidId,
   upload.single('photo'),
   validateBody(createContactSchema),
@@ -51,7 +51,7 @@ router.post(
 );
 router.put(
   '/:contactId',
-  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+  // checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
   isValidId,
   upload.single('photo'),
   validateBody(updateContactSchema),
@@ -61,7 +61,7 @@ router.put(
 // router.patch('/:contactId', ctrlWrapper(updateContactController));
 router.patch(
   '/:contactId',
-  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+  // checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
   upload.single('photo'),
   isValidId,
   validateBody(updateContactSchema),
@@ -71,7 +71,7 @@ router.patch(
 // router.delete('/:contactId', ctrlWrapper(deleteContactController));
 router.delete(
   '/:contactId',
-  checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
+  // checkRoles(ROLES.ADMIN, ROLES.MODERATOR),
   isValidId,
   ctrlWrapper(deleteContactController)
 );

@@ -12,11 +12,11 @@ export const ONE_DAY = 1000 * 60 * 60 * 24;
 
 // Kullanıcı rolleri
 
-export const ROLES = {
-  ADMIN: 'admin',
-  USER: 'user',
-  MODERATOR: 'moderator',
-};
+// export const ROLES = {
+//   ADMIN: 'admin',
+//   USER: 'user',
+//   MODERATOR: 'moderator',
+// };
 
 export const SMTP = {
   SMTP_HOST: 'SMTP_HOST',

@@ -6,7 +6,9 @@ import {
   updateContact,
   deleteContact,
 } from '../services/contacts.js';
-import { ROLES, CLOUDINARY } from '../constant/index.js';
+// import { ROLES, CLOUDINARY } from '../constant/index.js';
+import { CLOUDINARY } from '../constant/index.js';
+
 import * as contactServices from '../services/contacts.js';
 import { uploadToCloudinary } from '../services/cloudinary.js';
 import { env } from '../utils/env.js';
@@ -130,12 +132,12 @@ import saveFileToUploadDir from '../utils/saveFileToUploadDir.js';
 // };
 export const getContactsController = async (req, res, next) => {
   try {
-    if (req.user.role !== ROLES.ADMIN) {
-      return res.status(403).json({
-        success: false,
-        message: 'bu işlemi yapmamya yetkiniz yoktur.',
-      });
-    }
+    // if (req.user.role !== ROLES.ADMIN) {
+    //   return res.status(403).json({
+    //     success: false,
+    //     message: 'bu işlemi yapmamya yetkiniz yoktur.',
+    //   });
+    // }
     const userId = req.user._id;
     const contacts = await getAllContacts(userId);
 
