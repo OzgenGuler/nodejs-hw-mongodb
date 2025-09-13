@@ -1,8 +1,5 @@
 import { Router } from 'express';
-import {
-  sendResetEmailController,
-  resetPasswordController,
-} from '../controllers/auth.js';
+
 import { validateBody } from '../middlewares/validateBody.js';
 import {
   sendResetEmailSchema,
@@ -13,6 +10,8 @@ import {
   loginController,
   refreshController,
   logoutController,
+  sendResetEmailController,
+  resetPasswordController,
 } from '../controllers/auth.js';
 
 const authRouter = Router();

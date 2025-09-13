@@ -1,4 +1,4 @@
-import Contact from '../db/models/contacts.js';
+// import Contact from '../db/models/contacts.js';
 import {
   getAllContacts,
   getContactById,
@@ -8,8 +8,8 @@ import {
 } from '../services/contacts.js';
 // import { ROLES, CLOUDINARY } from '../constant/index.js';
 import { CLOUDINARY } from '../constant/index.js';
-
-import * as contactServices from '../services/contacts.js';
+import fs from 'fs/promises';
+// import * as contactServices from '../services/contacts.js';
 import { uploadToCloudinary } from '../services/cloudinary.js';
 import { env } from '../utils/env.js';
 import saveFileToCloudinary from '../utils/saveFileToCloudinary.js';
@@ -173,25 +173,93 @@ export const getContactByIdController = async (req, res, next) => {
   }
 };
 
+// export const createContactController = async (req, res, next) => {
+//   try {
+//     let photoUrl = null;
+//     if (req.file) {
+//       photoUrl = await uploadToCloudinary(req.file.buffer);
+//     }
+//     const newContact = await Contact.create({
+//       ...req.body,
+//       userId: req.user._id,
+//       photo: photoUrl,
+//     });
+//     res.status(201).json({
+//       status: 201,
+//       message: 'Successfully created a contact!',
+//       data: newContact,
+//     });
+
+//     const userId = req.user._id;
+//     const contact = await createContact(req.body, userId);
+
+//     res.status(201).json({
+//       status: 201,
+//       message: 'Successfully created a contact!',
+//       data: contact,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
+// export const updateContactController = async (req, res, next) => {
+//   try {
+//     let photoUrl = undefined;
+
+//     if (req.file) {
+//       photoUrl = await uploadToCloudinary(req.file.buffer);
+//     }
+
+//     const updatedContact = await contactServices.updateContact(
+//       req.params.contactId,
+//       { ...req.body, ...(photoUrl ? { photo: photoUrl } : {}) },
+//       req.user
+//     );
+
+//     res.json({
+//       status: 200,
+//       message: 'Contact updated successfully',
+//       data: updatedContact,
+//     });
+//     const { contactId } = req.params;
+//     const userId = req.user._id;
+//     const contact = await updateContact(contactId, req.body, userId);
+
+//     if (!contact) {
+//       return res.status(404).json({
+//         message: 'Contact not found',
+//       });
+//     }
+
+//     res.status(200).json({
+//       status: 200,
+//       message: 'Successfully patched a contact!',
+//       data: contact,
+//     });
+//   } catch (error) {
+//     next(error);
+//   }
+// };
+
 export const createContactController = async (req, res, next) => {
   try {
-    let photoUrl = null;
-    if (req.file) {
-      photoUrl = await uploadToCloudinary(req.file.buffer);
-    }
-    const newContact = await Contact.create({
-      ...req.body,
-      userId: req.user._id,
-      photo: photoUrl,
-    });
-    res.status(201).json({
-      status: 201,
-      message: 'Successfully created a contact!',
-      data: newContact,
-    });
-
     const userId = req.user._id;
-    const contact = await createContact(req.body, userId);
+    let photoUrl = null;
+
+    // Fotoğraf yüklendi mi kontrol et
+    if (req.file) {
+      photoUrl = await uploadToCloudinary(req.file.path);
+      // Temp dosyayı sil
+      await fs.unlink(req.file.path);
+    }
+
+    const contactData = {
+      ...req.body,
+      photo: photoUrl,
+    };
+
+    const contact = await createContact(contactData, userId);
 
     res.status(201).json({
       status: 201,
@@ -199,32 +267,37 @@ export const createContactController = async (req, res, next) => {
       data: contact,
     });
   } catch (error) {
+    // Hata durumunda temp dosyayı temizle
+    if (req.file) {
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error deleting temp file:', unlinkError);
+      }
+    }
     next(error);
   }
 };
 
 export const updateContactController = async (req, res, next) => {
   try {
-    let photoUrl = undefined;
-
-    if (req.file) {
-      photoUrl = await uploadToCloudinary(req.file.buffer);
-    }
-
-    const updatedContact = await contactServices.updateContact(
-      req.params.contactId,
-      { ...req.body, ...(photoUrl ? { photo: photoUrl } : {}) },
-      req.user
-    );
-
-    res.json({
-      status: 200,
-      message: 'Contact updated successfully',
-      data: updatedContact,
-    });
     const { contactId } = req.params;
     const userId = req.user._id;
-    const contact = await updateContact(contactId, req.body, userId);
+    let photoUrl = null;
+
+    // Fotoğraf yüklendi mi kontrol et
+    if (req.file) {
+      photoUrl = await uploadToCloudinary(req.file.path);
+      // Temp dosyayı sil
+      await fs.unlink(req.file.path);
+    }
+
+    const updateData = { ...req.body };
+    if (photoUrl) {
+      updateData.photo = photoUrl;
+    }
+
+    const contact = await updateContact(contactId, updateData, userId);
 
     if (!contact) {
       return res.status(404).json({
@@ -238,6 +311,14 @@ export const updateContactController = async (req, res, next) => {
       data: contact,
     });
   } catch (error) {
+    // Hata durumunda temp dosyayı temizle
+    if (req.file) {
+      try {
+        await fs.unlink(req.file.path);
+      } catch (unlinkError) {
+        console.error('Error deleting temp file:', unlinkError);
+      }
+    }
     next(error);
   }
 };
