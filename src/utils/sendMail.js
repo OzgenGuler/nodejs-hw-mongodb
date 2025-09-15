@@ -17,12 +17,15 @@ export const transporter = nodemailer.createTransport({
 });
 
 const sendMail = async (options) => {
-  return await transporter.sendMail(options, function (error, info) {
-    if (error) {
-      console.log('Nodemailer Transport - SendMail - Error:' + error);
-    } else {
-      console.log('Message sent: ' + info.response);
-    }
-  });
+  // return await transporter.sendMail(options, function (error, info) {
+  try {
+    const info = await transporter.sendMail(options);
+    console.log('Message sent: ' + info.response);
+    return info;
+  } catch (error) {
+    console.log('Nodemailer Transport - SendMail - Error:' + error);
+    throw error;
+  }
 };
+// };
 export default sendMail;

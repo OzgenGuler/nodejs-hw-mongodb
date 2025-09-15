@@ -8,7 +8,7 @@ import fs from 'fs/promises';
 import path from 'path';
 import handlebars from 'handlebars';
 import { SMTP } from '../constant/index.js';
-import sendEmail from '../utils/sendMail.js';
+import sendMail from '../utils/sendMail.js';
 import { env } from '../utils/env.js';
 import { TEMPLATES_DIR } from '../constant/index.js';
 
@@ -40,11 +40,12 @@ export const sendResetPasswordEmailService = async (email) => {
     name: user.name,
     link: `${env('APP_DOMAIN')}/reset-password?token=${resetToken}`,
   });
-  await sendEmail({
+  await sendMail({
     from: env(SMTP.SMTP_FROM),
     to: user.email,
     subject: 'Reset your password',
     html,
+    text: `Hello ${user.name},\n\nPlease reset your password by clicking the link: ${env('APP_DOMAIN')}/reset-password?token=${resetToken}\n\nThis link will expire in 5 minutes.\n\nIf you did not request a password reset, please ignore this email.\n\nBest regards,\nYour Company`,
   })
     .then((mail) => {
       console.log('Sending mail log:', mail);
