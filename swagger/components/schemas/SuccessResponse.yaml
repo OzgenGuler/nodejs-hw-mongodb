@@ -1,0 +1,12 @@
+type: object
+properties:
+  status:
+    type: integer
+    description: HTTP status code
+    example: 200
+  message:
+    type: string
+    description: Success message
+    example: 'Successfully found contacts!'
+  data:
+    description: Response data

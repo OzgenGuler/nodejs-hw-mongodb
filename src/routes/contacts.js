@@ -15,15 +15,19 @@ import {
 
 import { ctrlWrapper } from '../utils/ctrlWrapper.js';
 import { authenticate } from '../middlewares/authenticate.js';
-// import { authorize } from '../middlewares/authorize.js';
 import { upload } from '../middlewares/upload.js';
-// import * as contactsController from '../controllers/contacts.js';
-// import { ROLES } from '../constant/index.js';
-// import { checkRoles } from '../middlewares/checkRoles.js';
-// import mongoose from 'mongoose';
-// import createError from 'http-errors';
+import swaggerUi from 'swagger-ui-express';
+import fs from 'fs';
+import path from 'path';
 
 const router = express.Router();
+const swaggerDocument = JSON.parse(
+  fs.readFileSync(path.join(process.cwd(), 'docs/swagger.json'), 'utf8')
+);
+const options = {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: 'Contacts API Documentation',
+};
 router.use(authenticate);
 
 router.get('/', isValidId, ctrlWrapper(getContactsController));
@@ -47,5 +51,7 @@ router.patch(
 );
 
 router.delete('/:contactId', isValidId, ctrlWrapper(deleteContactController));
+router.use('/api-docs', swaggerUi.serve);
+router.get('/api-docs', swaggerUi.setup(swaggerDocument, options));
 
 export default router;
