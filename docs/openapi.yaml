@@ -25,7 +25,7 @@ tags:
 servers:
   - url: http://localhost:3000
     description: Development server
-  - url: https://nodejs-hw-mongodb-w6px.onrender.com
+  - url: https://hw7-swagger-uwzb.onrender.com
     description: Production server
 
 paths:
