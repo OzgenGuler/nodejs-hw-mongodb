@@ -2,250 +2,59 @@
   "openapi": "3.1.0",
   "info": {
     "version": "1.0.0",
-    "title": "NodeJS GoIT API",
+    "title": "Contacts Management API",
     "license": {
       "name": "Apache 2.0",
       "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
     },
-    "description": "This is a documentation of NodeJS GoIT API\n"
+    "description": "A comprehensive API for managing personal contacts with user authentication, password reset functionality, and image upload capabilities.\nFeatures: - User registration and authentication - JWT-based session management - Contact CRUD operations with user isolation - Image upload to Cloudinary - Password reset via email\n"
   },
   "servers": [
     {
-      "url": "http://localhost:3000"
+      "url": "http://localhost:3000",
+      "description": "Development server"
     },
     {
-      "url": "https://example.com/api/v1"
+      "url": "https://hw7-swagger-viab.onrender.com",
+      "description": "Production server"
     }
   ],
   "tags": [
     {
-      "name": "Users",
-      "description": "Operations about users."
-    },
-    {
       "name": "Auth",
-      "description": "Auth operations."
+      "description": "Authentication and user management"
     },
     {
-      "name": "Credit Cards",
-      "description": "Credit card operations."
-    },
-    {
-      "name": "Balance",
-      "description": "Balance operations."
+      "name": "Contacts",
+      "description": "Contact management operations"
     }
   ],
   "paths": {
-    "/users": {
-      "get": {
-        "tags": ["Users"],
-        "summary": "Get list of users",
-        "operationId": "getUsers",
-        "description": "Get list of users with this endpoint",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "query",
-            "name": "page",
-            "schema": {
-              "type": "integer"
-            },
-            "example": 1
-          },
-          {
-            "in": "query",
-            "name": "perPage",
-            "schema": {
-              "type": "integer",
-              "example": 10
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully found users!",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["status", "message", "data"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully found users!"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/user"
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          }
+    "contacts": {
+      "[object Object]": {
+        "get": {
+          "$ref": "../swagger/paths/contacts/{contactId}/get.yaml"
+        },
+        "patch": {
+          "$ref": "../swagger/paths/contacts/{contactId}/patch.yaml"
+        },
+        "delete": {
+          "$ref": "../swagger/paths/contacts/{contactId}/delete.yaml"
         }
       }
     },
-    "/auth/register": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Register a new user",
-        "operationId": "registerUser",
-        "description": "Register a new user with email and password",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["email", "password"],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "minLength": 6,
-                    "example": "password123"
-                  },
-                  "name": {
-                    "type": "string",
-                    "example": "John Doe"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "User registered successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["status", "message", "data"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 201
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "User registered successfully!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "$ref": "#/components/schemas/user"
-                        },
-                        "accessToken": {
-                          "type": "string",
-                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "409": {
-            "$ref": "#/components/responses/409"
-          }
-        }
-      }
+    "get": {
+      "$ref": "../swagger/paths/contacts/get.yaml"
     },
-    "/auth/login": {
-      "post": {
-        "tags": ["Auth"],
-        "summary": "Login user",
-        "operationId": "loginUser",
-        "description": "Login user with email and password",
-        "security": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "required": ["email", "password"],
-                "properties": {
-                  "email": {
-                    "type": "string",
-                    "format": "email",
-                    "example": "user@example.com"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "password123"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "description": "User logged in successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "required": ["status", "message", "data"],
-                  "properties": {
-                    "status": {
-                      "type": "integer",
-                      "example": 200
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Successfully logged in!"
-                    },
-                    "data": {
-                      "type": "object",
-                      "properties": {
-                        "user": {
-                          "$ref": "#/components/schemas/user"
-                        },
-                        "accessToken": {
-                          "type": "string",
-                          "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "$ref": "#/components/responses/400"
-          },
-          "401": {
-            "$ref": "#/components/responses/401"
-          }
-        }
+    "post": {
+      "$ref": "../swagger/paths/contacts/post.yaml"
+    },
+    "auth/register": {
+      "$ref": "../swagger/paths/auth/register.yaml"
+    },
+    "auth": {
+      "login": {
+        "$ref": "../swagger/paths/auth/login.yaml"
       }
     }
   },
@@ -253,141 +62,189 @@
     "securitySchemes": {
       "bearerAuth": {
         "type": "http",
-        "scheme": "bearer"
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
       }
     },
     "schemas": {
-      "user": {
+      "Contact": {
         "type": "object",
-        "required": ["_id", "email"],
+        "required": [
+          "name",
+          "phoneNumber",
+          "contactType",
+          "userId"
+        ],
         "properties": {
           "_id": {
-            "description": "User's id",
             "type": "string",
-            "example": "65e4decdd286b30065d54af9"
-          },
-          "email": {
-            "description": "User's email",
-            "type": "string",
-            "format": "email",
-            "example": "user@example.com"
+            "format": "objectid",
+            "description": "Unique identifier for the contact",
+            "example": "65f4c2a6b5f3a2b4c6d8e9f0"
           },
           "name": {
-            "description": "User's name",
             "type": "string",
+            "description": "Contact's full name",
             "example": "John Doe"
           },
-          "role": {
-            "description": "User's role",
+          "phoneNumber": {
             "type": "string",
-            "enum": ["admin", "user", "moderator"],
-            "example": "user"
+            "description": "Contact's phone number",
+            "example": "+1234567890"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "Contact's email address",
+            "example": "john.doe@example.com"
+          },
+          "isFavourite": {
+            "type": "boolean",
+            "description": "Whether the contact is marked as favourite",
+            "default": false
+          },
+          "contactType": {
+            "type": "string",
+            "enum": [
+              "work",
+              "home",
+              "personal"
+            ],
+            "description": "Type of contact",
+            "default": "personal"
+          },
+          "userId": {
+            "type": "string",
+            "format": "objectid",
+            "description": "ID of the user who owns this contact"
+          },
+          "photo": {
+            "type": "string",
+            "format": "uri",
+            "nullable": true,
+            "description": "URL to the contact's photo on Cloudinary",
+            "example": "https://res.cloudinary.com/demo/image/upload/sample.jpg"
           },
           "createdAt": {
-            "description": "User creation date",
             "type": "string",
             "format": "date-time",
-            "example": "2024-01-15T10:30:00Z"
+            "description": "Contact creation timestamp"
           },
           "updatedAt": {
-            "description": "User last update date",
             "type": "string",
             "format": "date-time",
-            "example": "2024-01-15T10:30:00Z"
+            "description": "Contact last update timestamp"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "required": [
+          "name",
+          "email"
+        ],
+        "properties": {
+          "_id": {
+            "type": "string",
+            "format": "objectid",
+            "description": "Unique identifier for the user"
+          },
+          "name": {
+            "type": "string",
+            "description": "User's full name",
+            "example": "Jane Smith"
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address",
+            "example": "jane@example.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "User creation timestamp"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "User last update timestamp"
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "example": 404
+          },
+          "message": {
+            "type": "string",
+            "description": "Error message",
+            "example": "Contact not found"
+          }
+        }
+      },
+      "SuccessResponse": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "integer",
+            "description": "HTTP status code",
+            "example": 200
+          },
+          "message": {
+            "type": "string",
+            "description": "Success message",
+            "example": "Successfully found contacts!"
+          },
+          "data": {
+            "description": "Response data"
           }
         }
       }
     },
     "responses": {
-      "400": {
-        "description": "Bad Request",
+      "NotFound": {
+        "description": "Resource not found",
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "required": ["status", "message", "data"],
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 400
-                },
-                "message": {
-                  "type": "string",
-                  "example": "BadRequestError"
-                },
-                "data": {
-                  "type": "object",
-                  "required": ["message"],
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Validation failed"
-                    }
-                  }
-                }
-              }
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "status": 404,
+              "message": "Contact not found"
             }
           }
         }
       },
-      "401": {
-        "description": "Unauthorized error",
+      "Unauthorized": {
+        "description": "Authentication required",
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "required": ["status", "message", "data"],
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 401
-                },
-                "message": {
-                  "type": "string",
-                  "example": "UnauthorizedError"
-                },
-                "data": {
-                  "type": "object",
-                  "required": ["message"],
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "Access token expired"
-                    }
-                  }
-                }
-              }
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "status": 401,
+              "message": "Access token expired"
             }
           }
         }
       },
-      "409": {
-        "description": "Conflict - Resource already exists",
+      "ValidationError": {
+        "description": "Validation error",
         "content": {
           "application/json": {
             "schema": {
-              "type": "object",
-              "required": ["status", "message", "data"],
-              "properties": {
-                "status": {
-                  "type": "integer",
-                  "example": 409
-                },
-                "message": {
-                  "type": "string",
-                  "example": "ConflictError"
-                },
-                "data": {
-                  "type": "object",
-                  "required": ["message"],
-                  "properties": {
-                    "message": {
-                      "type": "string",
-                      "example": "User already exists"
-                    }
-                  }
-                }
-              }
+              "$ref": "#/components/schemas/Error"
+            },
+            "example": {
+              "status": 400,
+              "message": "Validation failed"
             }
           }
         }
