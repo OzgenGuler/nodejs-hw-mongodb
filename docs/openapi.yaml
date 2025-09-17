@@ -25,7 +25,7 @@ tags:
 servers:
   - url: http://localhost:3000
     description: Development server
-  - url: https://hw7-swagger-viab.onrender.com
+  - url: https://nodejs-hw-mongodb-w6px.onrender.com
     description: Production server
 
 paths:
@@ -37,10 +37,10 @@ paths:
         $ref: '../swagger/paths/contacts/{contactId}/patch.yaml'
       delete:
         $ref: '../swagger/paths/contacts/{contactId}/delete.yaml'
-  get:
-    $ref: '../swagger/paths/contacts/get.yaml'
-  post:
-    $ref: '../swagger/paths/contacts/post.yaml'
+    get:
+      $ref: '../swagger/paths/contacts/get.yaml'
+    post:
+      $ref: '../swagger/paths/contacts/post.yaml'
   auth/register:
     $ref: '../swagger/paths/auth/register.yaml'
   auth:
