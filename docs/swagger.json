@@ -69,7 +69,12 @@
     "schemas": {
       "Contact": {
         "type": "object",
-        "required": ["name", "phoneNumber", "contactType", "userId"],
+        "required": [
+          "name",
+          "phoneNumber",
+          "contactType",
+          "userId"
+        ],
         "properties": {
           "_id": {
             "type": "string",
@@ -100,7 +105,11 @@
           },
           "contactType": {
             "type": "string",
-            "enum": ["work", "home", "personal"],
+            "enum": [
+              "work",
+              "home",
+              "personal"
+            ],
             "description": "Type of contact",
             "default": "personal"
           },
@@ -130,7 +139,10 @@
       },
       "User": {
         "type": "object",
-        "required": ["name", "email"],
+        "required": [
+          "name",
+          "email"
+        ],
         "properties": {
           "_id": {
             "type": "string",
