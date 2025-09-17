@@ -23,29 +23,26 @@ tags:
     description: Contact management operations
 
 servers:
-  - url: http://localhost:3000
-    description: Development server
   - url: https://hw7-swagger-uwzb.onrender.com
     description: Production server
 
 paths:
-  contacts:
-    { contactId }:
+  /contacts:
+    get:
+      $ref: '../swagger/paths/contacts/get.yaml'
+    post:
+      $ref: '../swagger/paths/contacts/post.yaml'
+    /{ contactId }:
       get:
         $ref: '../swagger/paths/contacts/{contactId}/get.yaml'
       patch:
         $ref: '../swagger/paths/contacts/{contactId}/patch.yaml'
       delete:
         $ref: '../swagger/paths/contacts/{contactId}/delete.yaml'
-    get:
-      $ref: '../swagger/paths/contacts/get.yaml'
-    post:
-      $ref: '../swagger/paths/contacts/post.yaml'
-  auth/register:
+  /auth/register:
     $ref: '../swagger/paths/auth/register.yaml'
-  auth:
-    login:
-      $ref: '../swagger/paths/auth/login.yaml'
+  /auth/login:
+    $ref: '../swagger/paths/auth/login.yaml'
   # /auth/logout:
   #   $ref: '../swagger/paths/auth/logout.yaml'
   # /auth/refresh:
