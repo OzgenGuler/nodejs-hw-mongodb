@@ -29,8 +29,8 @@ responses:
               type: string
               example: 'Successfully found contact with id 65f4c2a6b5f3a2b4c6d8e9f0!'
             data:
-              $ref: '../../components/schemas/Contact.yaml'
+              $ref: '../../../components/schemas/Contact.yaml'
   '401':
-    $ref: '../../components/responses/Unauthorized.yaml'
+    $ref: '../../../components/responses/Unauthorized.yaml'
   '404':
-    $ref: '../../components/responses/NotFound.yaml'
+    $ref: '../../../components/responses/NotFound.yaml'

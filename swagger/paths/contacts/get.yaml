@@ -68,6 +68,6 @@ responses:
             data:
               type: array
               items:
-                $ref: '../components/schemas/Contact.yaml'
+                $ref: '../../components/schemas/Contact.yaml'
   '401':
-    $ref: '../components/responses/Unauthorized.yaml'
+    $ref: '../../components/responses/Unauthorized.yaml'

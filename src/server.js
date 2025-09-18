@@ -3,17 +3,13 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import authRouter from './routes/auth.js';
 import contactsRouter from './routes/contacts.js';
-import docsRouter from './routes/docs.js';
-import swaggerUi from 'swagger-ui-express';
-import path from 'path';
-import yaml from 'js-yaml';
+import { swaggerDocs } from './middlewares/swaggerDocs.js';
 import { upload } from './middlewares/upload.js';
 import { UPLOAD_DIR } from './constant/index.js';
 
 export const setupServer = () => {
   const app = express();
   const port = process.env.PORT || 3000;
-  const swaggerDocument = yaml.load(path.join(process.cwd(), 'swagger.yaml'));
   // Middleware
   app.use(
     cors({
@@ -26,11 +22,10 @@ export const setupServer = () => {
   app.use(express.json());
   app.use(cookieParser());
   app.use('/uploads', express.static(UPLOAD_DIR));
-  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+  app.use('/api-docs', swaggerDocs());
   console.log('✅ Swagger UI mounted at /api-docs');
 
   // Routes
-  app.use(docsRouter);
 
   // Routes
   app.use('/auth', authRouter);

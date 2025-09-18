@@ -17,6 +17,6 @@ responses:
   '204':
     description: Contact successfully deleted
   '401':
-    $ref: '../../components/responses/Unauthorized.yaml'
+    $ref: ../../../components/responses/Unauthorized.yaml
   '404':
-    $ref: '../../components/responses/NotFound.yaml'
+    $ref: ../../../components/responses/NotFound.yaml

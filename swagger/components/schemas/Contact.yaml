@@ -39,7 +39,7 @@ properties:
   photo:
     type: string
     format: uri
-    nullable: true
+    # nullable: true
     description: URL to the contact's photo on Cloudinary
     example: 'https://res.cloudinary.com/demo/image/upload/sample.jpg'
   createdAt:

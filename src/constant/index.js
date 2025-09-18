@@ -45,3 +45,5 @@ export const UPLOAD_LIMITS = {
   MAX_FILE_SIZE: 5 * 1024 * 1024,
   MAX_FILES: 10,
 };
+
+export const SWAGGER_PATH = path.join(process.cwd(), 'docs', 'swagger.json');
